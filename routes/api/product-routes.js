@@ -16,9 +16,16 @@ router.get('/', async (req, res) => {
 });
 
 // get one product
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
+  try {
+    const productsData = await Product.findByPk(req.params.id);
+    if (!productsData) {return res.status(404).json({message: 'There is no product found with this id'});}
+    res.status(200).json(productsData);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 // create new product
@@ -37,7 +44,7 @@ router.post('/', (req, res) => {
       if (req.body.tagIds.length) {
         const productTagIdArr = req.body.tagIds.map((tag_id) => {
           return {
-            product_id: product.id,
+            id: product.id,
             tag_id,
           };
         });
@@ -63,7 +70,7 @@ router.put('/:id', (req, res) => {
   })
     .then((product) => {
       // find all associated tags from ProductTag
-      return ProductTag.findAll({ where: { product_id: req.params.id } });
+      return ProductTag.findAll({ where: { id: req.params.id } });
     })
     .then((productTags) => {
       // get list of current tag_ids
@@ -73,7 +80,7 @@ router.put('/:id', (req, res) => {
         .filter((tag_id) => !productTagIds.includes(tag_id))
         .map((tag_id) => {
           return {
-            product_id: req.params.id,
+            id: req.params.id,
             tag_id,
           };
         });
@@ -95,8 +102,19 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   // delete one product by its `id` value
+  try {
+    const productsData = await Category.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+    if (!productsData) {return res.status(404).json({message: 'There is no product found with this id'});}
+    res.status(200).json(productsData);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;
