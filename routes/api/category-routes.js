@@ -7,20 +7,24 @@ router.get('/', async (req, res) => {
   // find all categories
   // be sure to include its associated Products
   try {
-    const categoriesData = await Category.findAll();
+    const categoriesData = await Category.findAll({
+      include: [{ model: Product }],
+    });
     res.status(200).json(categoriesData);
   } catch (err) {
     res.status(500).json(err);
   }
-  });
+});
 
 router.get('/:id', async (req, res) => {
   // find one category by its `id` value
   // be sure to include its associated Products
   try {
-    const categoriesData = await Category.findByPk(req.params.id);
+    const categoriesData = await Category.findByPk(req.params.id, {
+      include: [{ model: Product }],
+    });
     if (!categoriesData) {
-      return res.status(404).json({message: 'There is no category found with this id'});
+      return res.status(404).json({ message: 'There is no category found with this id' });
     }
     res.status(200).json(categoriesData);
   } catch (err) {
@@ -46,7 +50,7 @@ router.put('/:id', async (req, res) => {
         id: req.params.id,
       },
     });
-    if (!categoriesData) { return res.status(404).json({message: 'There is no category found with this id'});}
+    if (!categoriesData) { return res.status(404).json({ message: 'There is no category found with this id' }); }
     res.status(200).json(categoriesData);
   } catch (err) {
     res.status(500).json(err);
@@ -61,7 +65,7 @@ router.delete('/:id', async (req, res) => {
         id: req.params.id,
       },
     });
-    if (!categoriesData) {return res.status(404).json({message: 'There is no category found with this id'});}
+    if (!categoriesData) { return res.status(404).json({ message: 'There is no category found with this id' }); }
     res.status(200).json(categoriesData);
   } catch (err) {
     res.status(500).json(err);
