@@ -8,7 +8,20 @@ router.get('/', async (req, res) => {
   // find all products
   // be sure to include its associated Category and Tag data
   try {
-    const productsData = await Product.findAll();
+    const productsData = await Product.findAll({
+      // include: {
+      //   model: Category,
+      //   through: {
+      //     attributes: ['category']
+      //   },
+      //   model: Tag,
+      //   through: {
+      //     attributes: ['tag']
+      //   }
+      // }
+      // console.log(req.body.params);
+    });
+    console.log('params', req.body);
     res.status(200).json(productsData);
   } catch (err) {
     res.status(500).json(err);
@@ -21,7 +34,7 @@ router.get('/:id', async (req, res) => {
   // be sure to include its associated Category and Tag data
   try {
     const productsData = await Product.findByPk(req.params.id);
-    if (!productsData) {return res.status(404).json({message: 'There is no product found with this id'});}
+    if (!productsData) { return res.status(404).json({ message: 'There is no product found with this id' }); }
     res.status(200).json(productsData);
   } catch (err) {
     res.status(500).json(err);
@@ -110,7 +123,7 @@ router.delete('/:id', async (req, res) => {
         id: req.params.id,
       },
     });
-    if (!productsData) {return res.status(404).json({message: 'There is no product found with this id'});}
+    if (!productsData) { return res.status(404).json({ message: 'There is no product found with this id' }); }
     res.status(200).json(productsData);
   } catch (err) {
     res.status(500).json(err);
