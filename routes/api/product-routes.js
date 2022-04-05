@@ -49,7 +49,7 @@ router.post('/', (req, res) => {
       if (req.body.tagIds.length) {
         const productTagIdArr = req.body.tagIds.map((tag_id) => {
           return {
-            id,
+            id: product.id,
             tag_id,
           };
         });
